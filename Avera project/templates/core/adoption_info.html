@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Adoption Information Hub | AVERA Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: #FFEADB; color: #E76F51;">
+            <i class="bi bi-info-circle-fill me-1"></i> Knowledge & Guidelines
+        </span>
+        <h1 class="fw-bold mt-2 text-dark">Adoption Information Hub</h1>
+        <p class="text-secondary lead" style="max-width: 750px;">
+            Clear, reliable, and transparent information regarding eligibility criteria, required documentation, and the legal adoption pathway.
+        </p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            {% for info in info_list %}
+                <div class="card card-avera p-4 mb-4">
+                    <h3 class="fw-bold text-dark mb-3"><i class="bi bi-journal-text me-2" style="color: #E76F51;"></i>{{ info.title }}</h3>
+                    <div class="text-secondary mb-4">{{ info.description|linebreaks }}</div>
+
+                    <div class="accordion" id="accordionInfo{{ info.id }}">
+                        <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold collapsed bg-light rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseElig{{ info.id }}">
+                                    <i class="bi bi-check2-circle text-success me-2 fs-5"></i> Eligibility Criteria
+                                </button>
+                            </h2>
+                            <div id="collapseElig{{ info.id }}" class="accordion-collapse collapse p-3">
+                                <div class="accordion-body p-1 text-secondary">
+                                    {{ info.eligibility|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold collapsed bg-light rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocs{{ info.id }}">
+                                    <i class="bi bi-file-earmark-text text-primary me-2 fs-5"></i> Required Documentation
+                                </button>
+                            </h2>
+                            <div id="collapseDocs{{ info.id }}" class="accordion-collapse collapse p-3">
+                                <div class="accordion-body p-1 text-secondary">
+                                    {{ info.required_documents|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold collapsed bg-light rounded-3" type="button" data-bs-target="#collapseSteps{{ info.id }}">
+                                    <i class="bi bi-diagram-3 text-warning me-2 fs-5"></i> Step-by-Step Adoption Process
+                                </button>
+                            </h2>
+                            <div id="collapseSteps{{ info.id }}" class="accordion-collapse collapse p-3">
+                                <div class="accordion-body p-1 text-secondary">
+                                    {{ info.adoption_process|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold collapsed bg-light rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContact{{ info.id }}">
+                                    <i class="bi bi-telephone-inbound text-danger me-2 fs-5"></i> Authorized Contact & Family Court Liaison
+                                </button>
+                            </h2>
+                            <div id="collapseContact{{ info.id }}" class="accordion-collapse collapse p-3">
+                                <div class="accordion-body p-1 text-secondary">
+                                    {{ info.contact_information|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="card card-avera p-5 text-center">
+                    <i class="bi bi-folder2-open fs-1 text-muted mb-2"></i>
+                    <h5 class="fw-bold">Adoption Hub Guidelines Loading</h5>
+                    <p class="text-secondary small">Comprehensive guidelines are currently being compiled by administrators.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card card-avera p-4 mb-4" style="background-color: #FFF0E8;">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-shield-check text-success me-2"></i>Important Legal Notice</h5>
+                <p class="small text-secondary mb-3">
+                    AVERA acts strictly as an informational and awareness platform. Formal legal adoption decrees are issued exclusively through authorized Family Courts and statutory Child Welfare committees.
+                </p>
+                <div class="small fw-semibold text-dark">
+                    Our platform ensures zero confusion, verified contacts, and direct gift support for children waiting for families.
+                </div>
+            </div>
+
+            <div class="card card-avera p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-patch-question-fill text-warning me-2"></i>Adoption FAQs</h5>
+                <ul class="list-unstyled mb-0">
+                    {% for f in faqs %}
+                        <li class="mb-3 border-bottom pb-2">
+                            <div class="fw-bold small text-dark mb-1">{{ f.question }}</div>
+                            <div class="small text-muted">{{ f.answer|truncatewords:15 }}</div>
+                        </li>
+                    {% empty %}
+                        <li class="small text-muted">No FAQs categorized under Adoption at this moment.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Children Profiles | AVERA Administration{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Children Profile Records</h2>
+            <p class="text-secondary small mb-0">Confidential, verified records under Care Organization supervision</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- New Child Profile Form -->
+        <div class="col-lg-5">
+            <div class="card card-avera p-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Add Child Profile</h4>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Care Organization <span class="text-danger">*</span></label>
+                        <select name="care_organization" class="form-select" required>
+                            {% for org in orgs %}
+                                <option value="{{ org.id }}">{{ org.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Child Name / Alias <span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Leo, Maya" required>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-secondary">Age <span class="text-danger">*</span></label>
+                            <input type="number" name="age" class="form-control" min="0" max="18" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-secondary">Gender <span class="text-danger">*</span></label>
+                            <select name="gender" class="form-select" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Health Status</label>
+                        <input type="text" name="health_status" class="form-control" value="Healthy" placeholder="e.g. Healthy, Routine vaccination completed">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Adoption / Welfare Status</label>
+                        <select name="adoption_status" class="form-select">
+                            <option value="Available">Available for Adoption Inquiries</option>
+                            <option value="In_Process">In Legal Adoption Process</option>
+                            <option value="Supported">Supported by Donor Gifts</option>
+                            <option value="Adopted">Adopted</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-secondary">About the Child / Background</label>
+                        <textarea name="description" rows="3" class="form-control" placeholder="Interests, favorite subjects, personality..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 fw-bold">
+                        <i class="bi bi-plus-circle me-1"></i> Save Child Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Existing Profiles List -->
+        <div class="col-lg-7">
+            <div class="card card-avera p-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="bi bi-people-fill me-2 text-danger"></i>Registered Children ({{ children.count }})</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name & Age</th>
+                                <th>Gender</th>
+                                <th>Organization</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in children %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ c.name }}</div>
+                                        <small class="text-muted">{{ c.age }} years old</small>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">{{ c.gender }}</span></td>
+                                    <td><small class="fw-semibold text-dark">{{ c.care_organization.name }}</small></td>
+                                    <td>
+                                        <span class="badge {% if c.adoption_status == 'Available' %}bg-success{% elif c.adoption_status == 'Adopted' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                            {{ c.get_adoption_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No child profiles found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

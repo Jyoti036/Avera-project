@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}AVERA - Child Adoption Awareness & Support Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5" style="background: linear-gradient(180deg, #FFFFFF 0%, #FFF8F3 100%);">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="badge px-3 py-2 rounded-pill mb-3 fw-bold" style="background-color: #FFE6DA; color: #E76F51; font-size: 0.85rem;">
+                    <i class="bi bi-stars me-1"></i> Child Adoption Awareness & Care Platform
+                </span>
+                <h1 class="display-4 fw-extrabold mb-3" style="color: #264653; line-height: 1.15;">
+                    Every adoption starts with <span style="color: #E76F51;">inspiration</span>, ends with a <span style="color: #F4A261;">gift</span>.
+                </h1>
+                <p class="lead text-secondary mb-4" style="font-size: 1.15rem;">
+                    And lives on through the stories that prove it. AVERA bridges compassionate individuals with verified care organizations—providing structured adoption knowledge, direct wishlist gifting, and transparent proof of impact.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'wishlists' %}" class="btn btn-avera-primary btn-lg shadow-sm">
+                        <i class="bi bi-gift-fill me-2"></i> Support Children via Gifts
+                    </a>
+                    <a href="{% url 'adoption_info' %}" class="btn btn-avera-outline btn-lg">
+                        <i class="bi bi-info-circle me-2"></i> Adoption Guidelines
+                    </a>
+                </div>
+
+                <div class="row g-3 mt-4 pt-3 border-top">
+                    <div class="col-4">
+                        <h4 class="fw-bold mb-0 text-dark">100%</h4>
+                        <small class="text-muted">Verified Orgs</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="fw-bold mb-0 text-dark">Direct</h4>
+                        <small class="text-muted">Wishlist Support</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="fw-bold mb-0 text-dark">Transparent</h4>
+                        <small class="text-muted">Proof of Impact</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card card-avera border-0 p-4 shadow-lg text-center position-relative" style="background: linear-gradient(135deg, #FFF0E8 0%, #FFFFFF 100%); border-radius: 24px;">
+                    <div class="p-3 mb-3 d-inline-block rounded-circle mx-auto" style="background-color: #FFE6DA; color: #E76F51;">
+                        <i class="bi bi-balloon-heart-fill fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Support a Child's Journey</h4>
+                    <p class="small text-secondary mb-4">
+                        Whether you are exploring adoption or wish to send educational gifts and essentials, AVERA ensures every contribution counts.
+                    </p>
+                    
+                    {% if not user.is_authenticated %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'user_register' %}" class="btn btn-avera-primary py-2 fw-semibold">
+                                <i class="bi bi-person-plus me-1"></i> Register as a Supporter
+                            </a>
+                            <a href="{% url 'user_login' %}" class="btn btn-outline-secondary py-2">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Account
+                            </a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'user_dashboard' %}" class="btn btn-avera-primary py-2 fw-semibold">
+                            <i class="bi bi-speedometer2 me-1"></i> View Your Supporter Dashboard
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Features Section -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: #E8F4F8; color: #2A9D8F;">What Does AVERA Offer?</span>
+            <h2 class="fw-bold mt-2 text-dark">Empowering Children & Compassionate Families</h2>
+            <p class="text-secondary mx-auto" style="max-width: 620px;">
+                Combining adoption awareness with verified child welfare support to remove social barriers and confusion.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-avera p-4 h-100">
+                    <div class="p-3 rounded-circle d-inline-block mb-3" style="background-color: #FFEADB; color: #E76F51; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-book-half fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Adoption Information Hub</h5>
+                    <p class="text-secondary small mb-0">
+                        Reliable, structured legal information, eligibility criteria, and step-by-step procedures to dispel misconceptions and guide eligible parents.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-avera p-4 h-100">
+                    <div class="p-3 rounded-circle d-inline-block mb-3" style="background-color: #E8F8F5; color: #2A9D8F; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-bag-heart-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Wishlist & Gift Matching</h5>
+                    <p class="text-secondary small mb-0">
+                        Care organizations publish exact needs (books, clothing, health supplies). Donors fulfill specific requests with purposeful giving.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-avera p-4 h-100">
+                    <div class="p-3 rounded-circle d-inline-block mb-3" style="background-color: #FEF9E7; color: #E9C46A; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-patch-check-fill fs-4 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Transparency & Proof Feedback</h5>
+                    <p class="text-secondary small mb-0">
+                        Verified care organizations confirm receipt with photos and impact updates, building trust and community participation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Active Wishlists Preview -->
+<section class="py-5" style="background-color: #FFF2EB;">
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge px-3 py-1 rounded-pill fw-bold bg-danger text-white mb-2">Urgent Needs</span>
+                <h2 class="fw-bold text-dark mb-0">Care Organization Wishlists</h2>
+            </div>
+            <a href="{% url 'wishlists' %}" class="btn btn-avera-outline">View All Wishlists <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row g-4">
+            {% for item in active_wishlists %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card card-avera p-4 h-100 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge badge-priority-{{ item.priority }} rounded-pill px-3 py-1">{{ item.get_priority_display }}</span>
+                            <span class="badge bg-secondary-subtle text-dark">{{ item.organization.name }}</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ item.item_name }}</h5>
+                        <p class="text-muted small mb-3 flex-grow-1">{{ item.description|truncatewords:20 }}</p>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Progress:</span>
+                                <span class="fw-bold text-dark">{{ item.quantity_received }} of {{ item.quantity_needed }} needed</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ item.progress_percentage }}%; background-color: #E76F51;" aria-valuenow="{{ item.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'pledge_gift_item' item.id %}" class="btn btn-avera-primary w-100 fw-semibold">
+                            <i class="bi bi-heart-fill me-1"></i> Pledge This Gift
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-4">
+                    <div class="text-muted">No wishlist items posted yet. Check back soon!</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5 bg-white">
+    <div class="container py-4 text-center">
+        <h2 class="fw-bold text-dark mb-3">Ready to Make a Meaningful Difference?</h2>
+        <p class="lead text-secondary mx-auto mb-4" style="max-width: 650px;">
+            Join hundreds of caring people who are bringing smiles, educational support, and loving awareness to children in care.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'user_register' %}" class="btn btn-avera-primary btn-lg shadow-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> Create Free Account
+            </a>
+            <a href="{% url 'adoption_info' %}" class="btn btn-avera-outline btn-lg">
+                <i class="bi bi-mortarboard me-1"></i> Learn About Adoption
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Wishlists & Child Needs | AVERA Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: #E8F4F8; color: #2A9D8F;">
+                <i class="bi bi-gift-fill me-1"></i> Wishlist Matching System
+            </span>
+            <h1 class="fw-bold mt-2 text-dark mb-1">Direct Child Support Wishlists</h1>
+            <p class="text-secondary mb-0">Browse verified orphanages and sponsor specific items needed by children.</p>
+        </div>
+
+        {% if user.is_authenticated and user.role == 'USER' %}
+            <a href="{% url 'pledge_gift' %}" class="btn btn-avera-primary">
+                <i class="bi bi-heart-fill me-1"></i> Pledge Custom Support Gift
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Filter by Organization -->
+    <div class="card card-avera p-3 mb-4">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0 fw-semibold">Filter by Care Organization:</label>
+                <select name="org" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Care Organizations</option>
+                    {% for org in orgs %}
+                        <option value="{{ org.id }}" {% if selected_org == org.id|stringformat:"s" %}selected{% endif %}>
+                            {{ org.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="d-none d-md-block form-label small text-muted mb-0">&nbsp;</label>
+                <a href="{% url 'wishlists' %}" class="btn btn-sm btn-outline-secondary w-100">Reset Filter</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Wishlist Cards Grid -->
+    <div class="row g-4">
+        {% for item in wishlists %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-avera p-4 h-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge badge-priority-{{ item.priority }} rounded-pill px-3 py-1">
+                            {{ item.get_priority_display }}
+                        </span>
+                        <span class="badge bg-light text-dark border">
+                            <i class="bi bi-building me-1"></i> {{ item.organization.name }}
+                        </span>
+                    </div>
+
+                    <h4 class="fw-bold text-dark mt-2 mb-1">{{ item.item_name }}</h4>
+                    <div class="text-muted small fw-semibold mb-2">Campaign: {{ item.title }}</div>
+                    <p class="text-secondary small mb-3 flex-grow-1">{{ item.description }}</p>
+
+                    <div class="bg-light p-3 rounded-3 mb-3 border">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Target: <strong>{{ item.quantity_needed }} items</strong></span>
+                            <span>Received: <strong class="text-success">{{ item.quantity_received }}</strong></span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ item.progress_percentage }}%; background-color: #2A9D8F;" aria-valuenow="{{ item.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="text-end small text-muted mt-1">{{ item.remaining_needed }} remaining to fulfill</div>
+                    </div>
+
+                    {% if item.status == 'Fulfilled' %}
+                        <button class="btn btn-secondary w-100" disabled>
+                            <i class="bi bi-check-circle-fill me-1"></i> Goal Fully Reached
+                        </button>
+                    {% else %}
+                        <a href="{% url 'pledge_gift_item' item.id %}" class="btn btn-avera-primary w-100 fw-semibold">
+                            <i class="bi bi-gift-fill me-1"></i> Sponsor / Pledge This Item
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <h5 class="fw-bold text-dark mt-2">No Wishlist Items Found</h5>
+                <p class="text-secondary small">Try clearing filters or check back shortly.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

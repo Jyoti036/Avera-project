@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Wishlists | AVERA Administration{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Care Organization Wishlists</h2>
+            <p class="text-secondary small mb-0">Publish needed materials for orphanages and track fulfillment</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- New Wishlist Form -->
+        <div class="col-lg-5">
+            <div class="card card-avera p-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="bi bi-cart-plus-fill me-2 text-danger"></i>Create Wishlist Campaign</h4>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Care Organization <span class="text-danger">*</span></label>
+                        <select name="organization" class="form-select" required>
+                            {% for org in orgs %}
+                                <option value="{{ org.id }}">{{ org.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Campaign Title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control" placeholder="e.g. Back-to-School Stationery Drive 2026" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Specific Item Needed <span class="text-danger">*</span></label>
+                        <input type="text" name="item_name" class="form-control" placeholder="e.g. School Backpacks & Notebooks" required>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-secondary">Quantity Needed <span class="text-danger">*</span></label>
+                            <input type="number" name="quantity_needed" class="form-control" min="1" value="10" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-secondary">Priority Level</label>
+                            <select name="priority" class="form-select">
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High Priority</option>
+                                <option value="Urgent">Urgent Need</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-secondary">Description & Specifics</label>
+                        <textarea name="description" rows="3" class="form-control" placeholder="Explain sizes, age group, or special details..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-avera-primary w-100 fw-bold">
+                        <i class="bi bi-plus-circle me-1"></i> Publish Wishlist Item
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Wishlists Listing -->
+        <div class="col-lg-7">
+            <div class="card card-avera p-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="bi bi-card-checklist me-2 text-primary"></i>Active Campaigns ({{ wishlists.count }})</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item & Org</th>
+                                <th>Priority</th>
+                                <th>Target / Recv</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for w in wishlists %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ w.item_name }}</div>
+                                        <small class="text-muted">{{ w.organization.name }}</small>
+                                    </td>
+                                    <td><span class="badge badge-priority-{{ w.priority }}">{{ w.get_priority_display }}</span></td>
+                                    <td>
+                                        <div class="small fw-semibold">{{ w.quantity_received }} / {{ w.quantity_needed }}</div>
+                                        <div class="progress" style="height: 6px; width: 80px;">
+                                            <div class="progress-bar bg-success" style="width: {{ w.progress_percentage }}%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if w.status == 'Fulfilled' %}bg-success{% elif w.status == 'Partially_Fulfilled' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                            {{ w.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No wishlist items created yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Gift #{{ gift.id }} | AVERA Administration{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card card-avera mx-auto p-4 p-md-5" style="max-width: 650px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold text-dark mb-0">Update Gift #{{ gift.id }}</h3>
+            <span class="badge bg-secondary">{{ gift.get_gift_type_display }}</span>
+        </div>
+
+        <div class="bg-light p-3 rounded-3 mb-4 border">
+            <div><strong>Donor:</strong> {{ gift.donor.get_full_name }} ({{ gift.donor.email }})</div>
+            <div><strong>Care Organization:</strong> {{ gift.organization.name }}</div>
+            <div><strong>Description:</strong> {{ gift.description }}</div>
+            <div><strong>Quantity:</strong> {{ gift.quantity }}</div>
+            {% if gift.tracking_reference %}
+                <div><strong>Tracking:</strong> {{ gift.tracking_reference }}</div>
+            {% endif %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-secondary">Gift Status <span class="text-danger">*</span></label>
+                <select name="status" class="form-select" required>
+                    <option value="Pledged" {% if gift.status == 'Pledged' %}selected{% endif %}>Pledged by Donor</option>
+                    <option value="Dispatched" {% if gift.status == 'Dispatched' %}selected{% endif %}>Dispatched / In Transit</option>
+                    <option value="Received" {% if gift.status == 'Received' %}selected{% endif %}>Received by Organization</option>
+                    <option value="Acknowledged" {% if gift.status == 'Acknowledged' %}selected{% endif %}>Acknowledged with Impact Proof</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold small text-secondary">
+                    Impact Message / Transparency Proof Note
+                </label>
+                <textarea name="feedback_message" rows="4" class="form-control" placeholder="Write verification message for the donor (e.g. 'The items were received in good condition and distributed to the children for their upcoming academic term...').">{% if gift.proof_feedback %}{{ gift.proof_feedback.message }}{% endif %}</textarea>
+                <div class="form-text small">This message will be visible to the donor on their supporter dashboard.</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'admin_manage_gifts' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-dark fw-bold">
+                    <i class="bi bi-save me-1"></i> Save Gift Status & Proof
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

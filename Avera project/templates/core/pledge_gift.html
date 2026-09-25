@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Pledge a Gift | AVERA Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card card-avera mx-auto p-4 p-md-5" style="max-width: 650px;">
+        <div class="text-center mb-4">
+            <div class="p-3 rounded-circle d-inline-block mb-2" style="background-color: #FFE6DA; color: #E76F51;">
+                <i class="bi bi-gift-fill fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-1">Pledge a Gift for Children</h2>
+            <p class="text-secondary small mb-0">Every gift brings joy, security, and learning opportunities</p>
+        </div>
+
+        {% if wishlist_item %}
+            <div class="alert alert-warning py-3 px-3 mb-4 rounded-3 border-0 bg-warning-subtle">
+                <div class="fw-bold text-dark"><i class="bi bi-star-fill text-warning me-1"></i> Fulfilling Wishlist: {{ wishlist_item.item_name }}</div>
+                <div class="small text-secondary">{{ wishlist_item.organization.name }} &bull; Needed: {{ wishlist_item.remaining_needed }} items</div>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Care Organization Selection -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-secondary">Care Organization <span class="text-danger">*</span></label>
+                <select name="organization" class="form-select" required>
+                    {% for org in orgs %}
+                        <option value="{{ org.id }}" {% if wishlist_item and wishlist_item.organization.id == org.id %}selected{% endif %}>
+                            {{ org.name }} — {{ org.address|truncatewords:6 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Gift Type -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-secondary">Gift Category <span class="text-danger">*</span></label>
+                <select name="gift_type" class="form-select" required>
+                    <option value="Books_Stationery">Educational Supplies & Books</option>
+                    <option value="Clothes">Clothing & Footwear</option>
+                    <option value="Toys_Games">Toys & Recreation</option>
+                    <option value="Health_Nutrition">Health, Hygiene & Nutrition</option>
+                    <option value="Other">Special Gift / Miscellaneous</option>
+                </select>
+            </div>
+
+            <!-- Quantity -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-secondary">Quantity <span class="text-danger">*</span></label>
+                <input type="number" name="quantity" class="form-control" min="1" value="{% if wishlist_item %}{{ wishlist_item.remaining_needed|default:1 }}{% else %}1{% endif %}" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-secondary">Gift Details & Message <span class="text-danger">*</span></label>
+                <textarea name="description" rows="3" class="form-control" placeholder="Specify items (e.g., 5 sets of geometry boxes, winter jackets, warm blankets...)" required>{% if wishlist_item %}Contribution for wishlist item: {{ wishlist_item.item_name }}{% endif %}</textarea>
+            </div>
+
+            <!-- Tracking Reference (Optional) -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold small text-secondary">Courier / Delivery Reference (Optional)</label>
+                <input type="text" name="tracking_reference" class="form-control" placeholder="e.g. Courier Tracking # or Direct Handover note">
+                <div class="form-text small">You can update this after shipping items to the care organization.</div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-avera-primary py-2 fw-bold">
+                    <i class="bi bi-heart-fill me-1"></i> Submit Gift Pledge
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

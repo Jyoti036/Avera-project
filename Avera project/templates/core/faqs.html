@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Frequently Asked Questions | AVERA Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: #E8F4F8; color: #2A9D8F;">
+            <i class="bi bi-question-circle-fill me-1"></i> Help & FAQs
+        </span>
+        <h1 class="fw-bold mt-2 text-dark">Frequently Asked Questions</h1>
+        <p class="text-secondary mx-auto" style="max-width: 600px;">
+            Answers to common questions regarding adoption awareness, gifting, privacy, and care organization verification.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="accordion" id="faqAccordion">
+                {% for f in faqs %}
+                    <div class="accordion-item card card-avera border-0 mb-3 overflow-hidden shadow-sm">
+                        <h2 class="accordion-header" id="heading{{ f.id }}">
+                            <button class="accordion-button fw-bold text-dark bg-white {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ f.id }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ f.id }}">
+                                <span class="badge bg-secondary-subtle text-dark me-2 small">{{ f.get_category_display }}</span>
+                                {{ f.question }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ f.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ f.id }}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary">
+                                {{ f.answer|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center py-5 text-muted">
+                        No FAQ entries available at this moment.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Gifts & Proof | AVERA Administration{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Donor Gifts & Transparency Management</h2>
+            <p class="text-secondary small mb-0">Track shipments, verify delivery, and publish feedback proof for donors</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <div class="card card-avera p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Donor Details</th>
+                        <th>Care Org</th>
+                        <th>Gift Details</th>
+                        <th>Tracking / Courier</th>
+                        <th>Status</th>
+                        <th>Proof / Feedback</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gift in gifts %}
+                        <tr>
+                            <td><strong>#{{ gift.id }}</strong></td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ gift.donor.get_full_name }}</div>
+                                <div class="small text-muted">{{ gift.donor.email }}</div>
+                                <small class="text-muted">{{ gift.donor.phone }}</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">{{ gift.organization.name }}</div>
+                            </td>
+                            <td>
+                                <div><strong>{{ gift.get_gift_type_display }}</strong></div>
+                                <div class="small text-muted">{{ gift.description }}</div>
+                                <span class="badge bg-secondary">Qty: {{ gift.quantity }}</span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ gift.tracking_reference|default:"Not specified" }}</small>
+                            </td>
+                            <td>
+                                <span class="badge {% if gift.status == 'Acknowledged' %}bg-success{% elif gift.status == 'Pledged' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                                    {{ gift.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if gift.proof_feedback %}
+                                    <span class="badge bg-success-subtle text-success border border-success">
+                                        <i class="bi bi-check-circle me-1"></i> Proof Attached
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'admin_update_gift_status' gift.id %}" class="btn btn-sm btn-dark">
+                                    <i class="bi bi-pencil me-1"></i> Edit Status
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No donor gifts registered yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

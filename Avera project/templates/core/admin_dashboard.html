@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}AVERA Admin Management Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <span class="badge bg-dark px-3 py-2 rounded-pill mb-1">
+                <i class="bi bi-shield-lock-fill text-warning me-1"></i> Staff Administration
+            </span>
+            <h1 class="fw-bold text-dark mb-0">Platform Overview Dashboard</h1>
+            <p class="text-secondary small mb-0">Logged in as Administrator: <strong>{{ user.get_full_name }}</strong> ({{ user.email }})</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_manage_gifts' %}" class="btn btn-outline-dark fw-semibold">
+                <i class="bi bi-gift me-1"></i> Manage Gifts
+            </a>
+            <a href="{% url 'admin_manage_children' %}" class="btn btn-dark fw-semibold">
+                <i class="bi bi-person-heart me-1"></i> Child Profiles
+            </a>
+            <a href="{% url 'admin_manage_wishlists' %}" class="btn btn-avera-primary fw-semibold">
+                <i class="bi bi-plus-circle me-1"></i> Add Wishlist
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Total Donors</div>
+                <h2 class="fw-bold text-dark my-1">{{ total_users }}</h2>
+                <small class="text-muted">Registered Users</small>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Care Orgs</div>
+                <h2 class="fw-bold text-dark my-1">{{ total_orgs }}</h2>
+                <small class="text-muted">Partner Homes</small>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Children</div>
+                <h2 class="fw-bold text-dark my-1">{{ total_children }}</h2>
+                <small class="text-muted">Active Profiles</small>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Wishlists</div>
+                <h2 class="fw-bold text-dark my-1">{{ total_wishlists }}</h2>
+                <small class="text-muted">Campaign Needs</small>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Gifts Total</div>
+                <h2 class="fw-bold text-dark my-1">{{ total_gifts }}</h2>
+                <small class="text-muted">All Pledges</small>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card card-avera p-3 border-0 bg-white text-center shadow-sm">
+                <div class="text-secondary small">Pending Review</div>
+                <h2 class="fw-bold text-warning my-1">{{ pending_gifts }}</h2>
+                <small class="text-muted">Action Needed</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Sections -->
+    <div class="row g-4">
+        <!-- Recent Gifts Table -->
+        <div class="col-lg-8">
+            <div class="card card-avera p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-dark mb-0"><i class="bi bi-gift-fill me-2 text-danger"></i>Recent Supporter Gifts</h4>
+                    <a href="{% url 'admin_manage_gifts' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Gift ID</th>
+                                <th>Donor</th>
+                                <th>Category & Qty</th>
+                                <th>Organization</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for gift in recent_gifts %}
+                                <tr>
+                                    <td><strong>#{{ gift.id }}</strong></td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ gift.donor.get_full_name }}</div>
+                                        <small class="text-muted">{{ gift.donor.email }}</small>
+                                    </td>
+                                    <td>
+                                        <div>{{ gift.get_gift_type_display }}</div>
+                                        <span class="badge bg-secondary">Qty: {{ gift.quantity }}</span>
+                                    </td>
+                                    <td><small class="fw-semibold text-dark">{{ gift.organization.name }}</small></td>
+                                    <td>
+                                        <span class="badge {% if gift.status == 'Acknowledged' %}bg-success{% elif gift.status == 'Pledged' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                                            {{ gift.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'admin_update_gift_status' gift.id %}" class="btn btn-sm btn-dark">
+                                            Update
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">No gifts recorded yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Registered Donors -->
+        <div class="col-lg-4">
+            <div class="card card-avera p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-people-fill me-2 text-primary"></i>Recently Registered Donors</h5>
+                <ul class="list-group list-group-flush">
+                    {% for u in recent_users %}
+                        <li class="list-group-item px-0 py-2 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-semibold text-dark small">{{ u.get_full_name }}</div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">{{ u.email }}</div>
+                                </div>
+                                <span class="badge bg-light text-secondary border small">{{ u.get_user_type_display }}</span>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="small text-muted py-2">No users registered yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

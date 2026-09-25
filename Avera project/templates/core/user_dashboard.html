@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}My Supporter Dashboard | AVERA Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header with user profile -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-dark mb-1">Hello, {{ user.get_full_name }}! 👋</h1>
+            <p class="text-secondary mb-0">
+                <i class="bi bi-envelope-fill me-1 text-danger"></i> {{ user.email }} &bull; 
+                <i class="bi bi-telephone-fill me-1 text-primary"></i> {{ user.phone|default:"No phone provided" }} &bull;
+                <span class="badge bg-secondary-subtle text-dark">{{ user.get_user_type_display }}</span>
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'pledge_gift' %}" class="btn btn-avera-primary fw-semibold">
+                <i class="bi bi-gift-fill me-1"></i> Make a New Pledge
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-avera p-3 border-0 bg-white shadow-sm">
+                <div class="d-flex align-items-center">
+                    <div class="p-3 rounded-circle me-3" style="background-color: #FFE6DA; color: #E76F51;">
+                        <i class="bi bi-gift-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_gifts_pledged }}</h3>
+                        <small class="text-muted">Total Gifts Pledged</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-avera p-3 border-0 bg-white shadow-sm">
+                <div class="d-flex align-items-center">
+                    <div class="p-3 rounded-circle me-3" style="background-color: #E8F8F5; color: #2A9D8F;">
+                        <i class="bi bi-patch-check-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ fulfilled_gifts_count }}</h3>
+                        <small class="text-muted">Verified & Acknowledged</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-avera p-3 border-0 bg-white shadow-sm">
+                <div class="d-flex align-items-center">
+                    <div class="p-3 rounded-circle me-3" style="background-color: #FFF3CD; color: #856404;">
+                        <i class="bi bi-bell-fill fs-3 text-warning"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ unread_count }}</h3>
+                        <small class="text-muted">Unread Notifications</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Gift Tracking Table -->
+        <div class="col-lg-8">
+            <div class="card card-avera p-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="bi bi-truck me-2 text-danger"></i>My Gift Contributions & Tracking</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Gift Details</th>
+                                <th>Care Org</th>
+                                <th>Qty</th>
+                                <th>Status</th>
+                                <th>Impact Proof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for gift in user_gifts %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ gift.get_gift_type_display }}</div>
+                                        <div class="small text-muted">{{ gift.description|truncatewords:6 }}</div>
+                                        <small class="text-secondary">{{ gift.created_at|date:"M d, Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark small">{{ gift.organization.name }}</div>
+                                        <small class="text-muted">{{ gift.organization.phone }}</small>
+                                    </td>
+                                    <td><span class="badge bg-secondary">{{ gift.quantity }}</span></td>
+                                    <td>
+                                        {% if gift.status == 'Pledged' %}
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Pledged</span>
+                                        {% elif gift.status == 'Dispatched' %}
+                                            <span class="badge bg-info text-dark"><i class="bi bi-send me-1"></i>In Transit</span>
+                                        {% elif gift.status == 'Received' %}
+                                            <span class="badge bg-primary"><i class="bi bi-building-check me-1"></i>Received</span>
+                                        {% elif gift.status == 'Acknowledged' %}
+                                            <span class="badge bg-success"><i class="bi bi-patch-check-fill me-1"></i>Acknowledged</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if gift.proof_feedback %}
+                                            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ gift.id }}">
+                                                <i class="bi bi-images me-1"></i> View Proof
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="feedbackModal{{ gift.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title fw-bold">Transparency Feedback Proof</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-dark">{{ gift.proof_feedback.message }}</p>
+                                                            <small class="text-muted">Verified on {{ gift.proof_feedback.feedback_date|date:"M d, Y" }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted small">Pending delivery</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        You haven't pledged any gifts yet. <a href="{% url 'wishlists' %}" class="fw-bold" style="color: #E76F51;">Browse wishlists now!</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Column -->
+        <div class="col-lg-4">
+            <div class="card card-avera p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bell-fill text-warning me-2"></i>Updates & Notifications</h5>
+                <div class="list-group list-group-flush">
+                    {% for notif in notifications %}
+                        <div class="list-group-item px-0 py-2 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge {% if not notif.is_read %}bg-danger{% else %}bg-light text-muted{% endif %} rounded-pill small">
+                                    {{ notif.get_notification_type_display }}
+                                </span>
+                                <small class="text-muted">{{ notif.notification_date|timesince }} ago</small>
+                            </div>
+                            <div class="small text-dark {% if not notif.is_read %}fw-semibold{% endif %}">
+                                {{ notif.message }}
+                            </div>
+                            {% if not notif.is_read %}
+                                <a href="{% url 'mark_notification_read' notif.id %}" class="badge text-bg-light text-decoration-none border mt-1">
+                                    Mark as read
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="text-muted small py-3">No notifications right now.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
